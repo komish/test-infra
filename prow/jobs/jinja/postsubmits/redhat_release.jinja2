@@ -1,0 +1,38 @@
+{% for service in aws_services  %}
+  aws-controllers-k8s/{{ service }}-controller:
+  - name: {{ service }}-rhctrl-post-submit
+    decorate: true
+    extra_refs:
+    - org: aws-controllers-k8s
+      repo: test-infra
+      base_ref: main
+      workdir: true
+    spec:
+      serviceAccountName: post-submit-service-account
+      containers:
+        - image: public.ecr.aws/aws-controllers-k8s/prow:prow-deploy-0.0.2
+          securityContext:
+            privileged: true
+          command: ["/bin/bash", "-c", "cd cd/scripts && ./release-red-hat-controller.sh"]
+    branches: #supports tags too.
+    - ^v[0-9]+\.[0-9]+\.[0-9]+$
+    - stable
+  - name: {{ service }}-rhbundle-post-submit
+    decorate: true
+    extra_refs:
+    - org: aws-controllers-k8s
+      repo: test-infra
+      base_ref: main
+      workdir: true
+    spec:
+      serviceAccountName: post-submit-service-account
+      containers:
+        - image: public.ecr.aws/aws-controllers-k8s/prow:prow-deploy-0.0.2
+          securityContext:
+            privileged: true
+          command: ["/bin/bash", "-c", "cd cd/scripts && ./release-red-hat-bundle.sh"]
+    branches: #supports tags too.
+    - ^v[0-9]+\.[0-9]+\.[0-9]+$
+    - stable
+
+{% endfor %}

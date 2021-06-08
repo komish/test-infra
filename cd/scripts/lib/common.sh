@@ -47,3 +47,18 @@ perform_buildah_and_helm_login() {
   export HELM_EXPERIMENTAL_OCI=1
   echo "$__pw" | helm registry login -u AWS --password-stdin public.ecr.aws
 }
+
+perform_red_hat_connect_login() {
+    local __pw="" # TODO: need to get registry secret from prow
+    # The registry secret changes per push context (e.g. each controller and each bundle
+    # has its own push secret)
+    echo "$__pw" | buildah login -u unused --password-stdin scan.connect.redhat.com
+}
+
+get_red_hat_ospid() {
+    # TODO: implement an OSPID look up for each service and bundle that
+    # is in scope.
+    local __service="$1"
+    local __ospid=$(echo) # placeholder
+    echo $__ospid
+}
